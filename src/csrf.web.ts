@@ -85,3 +85,8 @@ export const verify = async (
   }
   return decrypted === secret;
 };
+
+/**
+ * Create cryptographic random value
+ */
+export const randomSecret = () => webCrypto.randomUUID();

@@ -1,4 +1,9 @@
-import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  randomUUID,
+} from "node:crypto";
 import type {
   CipherCCMTypes,
   CipherOCBTypes,
@@ -69,3 +74,8 @@ export const verify = (
   }
   return Promise.resolve(decrypted === secret);
 };
+
+/**
+ * Create cryptographic random value
+ */
+export const randomSecret = () => randomUUID();
