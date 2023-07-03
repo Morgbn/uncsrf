@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/morgbn/uncsrf/compare/v1.0.0...v1.1.0) (2023-07-03)
+
+
+### Features
+
+* :sparkles: add randomSecret() ([0dc0a3f](https://github.com/morgbn/uncsrf/commit/0dc0a3f8e0d50e77ad5bd37e6d0f2805a1d19a03))
+
 # 1.0.0 (2023-07-01)
 
 
