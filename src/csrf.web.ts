@@ -10,11 +10,11 @@ export const defaultEncryptAlgorithm: EncryptAlgorithm = "AES-CBC";
 
 export const importEncryptSecret = async (
   secret?: string,
-  encryptAlgorithm?: EncryptAlgorithm
+  encryptAlgorithm?: EncryptAlgorithm | ""
 ): Promise<EncryptSecret> => {
   const encryptKey = await subtle.generateKey(
     {
-      name: encryptAlgorithm ?? "AES-CBC",
+      name: encryptAlgorithm || defaultEncryptAlgorithm,
       length: 256,
     },
     true,
@@ -23,12 +23,15 @@ export const importEncryptSecret = async (
   return await subtle.exportKey("jwk", encryptKey);
 };
 
-const importKey = (key: JsonWebKey, encryptAlgorithm: EncryptAlgorithm) => {
+const importKey = (
+  key: JsonWebKey,
+  encryptAlgorithm?: EncryptAlgorithm | ""
+) => {
   return subtle.importKey(
     "jwk",
     key,
     {
-      name: encryptAlgorithm,
+      name: encryptAlgorithm || defaultEncryptAlgorithm,
       length: 256,
     },
     true,
@@ -37,16 +40,16 @@ const importKey = (key: JsonWebKey, encryptAlgorithm: EncryptAlgorithm) => {
 };
 
 /**
- * Create a new CSRF token (encrypt secret using csrfConfig.encryptAlgorithm)
+ * Create a new CSRF token
  */
 export const create = async (
   secret: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm: EncryptAlgorithm
+  encryptAlgorithm?: EncryptAlgorithm | ""
 ): Promise<string> => {
   const iv = getRandomValues(new Uint8Array(16));
   const encrypted = await subtle.encrypt(
-    { name: encryptAlgorithm, iv },
+    { name: encryptAlgorithm || defaultEncryptAlgorithm, iv },
     await importKey(encryptSecret, encryptAlgorithm),
     new TextEncoder().encode(secret)
   );
@@ -57,13 +60,13 @@ export const create = async (
 };
 
 /**
- * Check csrf token (decrypt secret using csrfConfig.encryptAlgorithm)
+ * Check csrf token
  */
 export const verify = async (
   secret: string,
   token: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm: EncryptAlgorithm
+  encryptAlgorithm?: EncryptAlgorithm | ""
 ): Promise<boolean> => {
   const [iv, encrypted] = token.split(":");
   if (!iv || !encrypted) {
@@ -73,7 +76,7 @@ export const verify = async (
   try {
     const encodedDecrypted = await subtle.decrypt(
       {
-        name: encryptAlgorithm,
+        name: encryptAlgorithm || defaultEncryptAlgorithm,
         iv: Buffer.from(iv, "base64"),
       },
       await importKey(encryptSecret, encryptAlgorithm),

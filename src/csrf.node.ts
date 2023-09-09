@@ -21,7 +21,7 @@ export const defaultEncryptAlgorithm: EncryptAlgorithm = "aes-256-cbc";
 
 export const importEncryptSecret = (
   secret?: string,
-  _encryptAlgorithm?: EncryptAlgorithm // eslint-disable-line @typescript-eslint/no-unused-vars
+  _encryptAlgorithm?: EncryptAlgorithm | "" // eslint-disable-line @typescript-eslint/no-unused-vars
 ): Promise<EncryptSecret> => {
   return Promise.resolve(
     Buffer.from(secret ?? randomBytes(22).toString("base64"))
@@ -29,16 +29,16 @@ export const importEncryptSecret = (
 };
 
 /**
- * Create a new CSRF token (encrypt secret using csrfConfig.encryptAlgorithm)
+ * Create a new CSRF token
  */
 export const create = (
   secret: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm: EncryptAlgorithm
+  encryptAlgorithm?: EncryptAlgorithm | ""
 ): Promise<string> => {
   const iv = randomBytes(16);
   const cipher = createCipheriv(
-    encryptAlgorithm,
+    encryptAlgorithm || defaultEncryptAlgorithm,
     Buffer.from(encryptSecret),
     iv
   );
@@ -48,13 +48,13 @@ export const create = (
 };
 
 /**
- * Check csrf token (decrypt secret using csrfConfig.encryptAlgorithm)
+ * Check csrf token
  */
 export const verify = (
   secret: string,
   token: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm: EncryptAlgorithm
+  encryptAlgorithm?: EncryptAlgorithm | ""
 ): Promise<boolean> => {
   const [iv, encrypted] = token.split(":");
   if (!iv || !encrypted) {
@@ -63,7 +63,7 @@ export const verify = (
   let decrypted;
   try {
     const decipher = createDecipheriv(
-      encryptAlgorithm,
+      encryptAlgorithm || defaultEncryptAlgorithm,
       Buffer.from(encryptSecret),
       Buffer.from(iv, "base64")
     );
