@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/morgbn/uncsrf/compare/v1.1.0...v1.1.1) (2023-09-09)
+
+
+### Bug Fixes
+
+* :art: make encryptAlgorithm optional ([80a2a62](https://github.com/morgbn/uncsrf/commit/80a2a62326aed6fe9e61ac810b0c8fac6e335e21))
+
 # [1.1.0](https://github.com/morgbn/uncsrf/compare/v1.0.0...v1.1.0) (2023-07-03)
 
 
