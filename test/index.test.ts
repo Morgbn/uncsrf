@@ -1,5 +1,4 @@
-import { expect, it, describe, assertType } from "vitest";
-import "./polyfill";
+import { expect, it, describe, assertType, beforeAll, vi } from "vitest";
 
 import * as uncsrfNode from "../src/csrf.node";
 import * as uncsrfWeb from "../src/csrf.web";
@@ -9,10 +8,20 @@ describe("uncsrf:node", () => {
 });
 
 describe("uncsrf:web", () => {
+  beforeAll(async () => {
+    // Mock the crypto object provided by node:crypto
+    const { webcrypto } = await import("node:crypto");
+    vi.stubGlobal("crypto", webcrypto);
+  });
   runTests(uncsrfWeb);
 });
 
 function runTests(csrf) {
+  it("randomEncryptSecret", async () => {
+    const encryptSecret = await csrf.randomEncryptSecret();
+    expect(encryptSecret).toBeTypeOf("string");
+    expect(encryptSecret.length).toBe(32);
+  });
   it("importEncryptSecret", async () => {
     const encryptSecret = await csrf.importEncryptSecret();
     if (encryptSecret instanceof Buffer) {

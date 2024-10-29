@@ -4,7 +4,7 @@ const getRandomValues: Crypto["getRandomValues"] = (array: any) =>
   webCrypto.getRandomValues(array);
 
 export type EncryptAlgorithm = "AES-CBC";
-export type EncryptSecret = JsonWebKey;
+export type EncryptSecret = CryptoKey;
 
 export const defaultEncryptAlgorithm: EncryptAlgorithm = "AES-CBC";
 
@@ -12,29 +12,12 @@ export const importEncryptSecret = async (
   secret?: string,
   encryptAlgorithm?: EncryptAlgorithm | ""
 ): Promise<EncryptSecret> => {
-  const encryptKey = await subtle.generateKey(
-    {
-      name: encryptAlgorithm || defaultEncryptAlgorithm,
-      length: 256,
-    },
-    true,
-    ["encrypt", "decrypt"]
-  );
-  return await subtle.exportKey("jwk", encryptKey);
-};
-
-const importKey = (
-  key: JsonWebKey,
-  encryptAlgorithm?: EncryptAlgorithm | ""
-) => {
-  return subtle.importKey(
-    "jwk",
-    key,
-    {
-      name: encryptAlgorithm || defaultEncryptAlgorithm,
-      length: 256,
-    },
-    true,
+  const keyData = new TextEncoder().encode(secret ?? randomEncryptSecret());
+  return await subtle.importKey(
+    "raw",
+    keyData,
+    { name: encryptAlgorithm || defaultEncryptAlgorithm },
+    false,
     ["encrypt", "decrypt"]
   );
 };
@@ -50,7 +33,7 @@ export const create = async (
   const iv = getRandomValues(new Uint8Array(16));
   const encrypted = await subtle.encrypt(
     { name: encryptAlgorithm || defaultEncryptAlgorithm, iv },
-    await importKey(encryptSecret, encryptAlgorithm),
+    encryptSecret,
     new TextEncoder().encode(secret)
   );
   const encryptedBuffer = Buffer.from(new Uint8Array(encrypted));
@@ -79,7 +62,7 @@ export const verify = async (
         name: encryptAlgorithm || defaultEncryptAlgorithm,
         iv: Buffer.from(iv, "base64"),
       },
-      await importKey(encryptSecret, encryptAlgorithm),
+      encryptSecret,
       Buffer.from(encrypted, "base64")
     );
     decrypted = new TextDecoder().decode(encodedDecrypted);
@@ -93,3 +76,11 @@ export const verify = async (
  * Create cryptographic random value
  */
 export const randomSecret = () => webCrypto.randomUUID();
+
+/**
+ * Create a random encrypt secret
+ */
+export const randomEncryptSecret = () =>
+  [...crypto.getRandomValues(new Uint8Array(16))]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");

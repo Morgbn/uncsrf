@@ -23,9 +23,7 @@ export const importEncryptSecret = (
   secret?: string,
   _encryptAlgorithm?: EncryptAlgorithm | "" // eslint-disable-line @typescript-eslint/no-unused-vars
 ): Promise<EncryptSecret> => {
-  return Promise.resolve(
-    Buffer.from(secret ?? randomBytes(22).toString("base64"))
-  );
+  return Promise.resolve(Buffer.from(secret ?? randomEncryptSecret()));
 };
 
 /**
@@ -79,3 +77,8 @@ export const verify = (
  * Create cryptographic random value
  */
 export const randomSecret = () => randomUUID();
+
+/**
+ * Create a random encrypt secret
+ */
+export const randomEncryptSecret = () => randomBytes(22).toString("base64");
