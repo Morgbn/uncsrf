@@ -21,7 +21,7 @@ export const defaultEncryptAlgorithm: EncryptAlgorithm = "aes-256-cbc";
 
 export const importEncryptSecret = (
   secret?: string,
-  _encryptAlgorithm?: EncryptAlgorithm | "" // eslint-disable-line @typescript-eslint/no-unused-vars
+  _encryptAlgorithm?: EncryptAlgorithm | "",
 ): Promise<EncryptSecret> => {
   return Promise.resolve(Buffer.from(secret ?? randomEncryptSecret()));
 };
@@ -32,13 +32,13 @@ export const importEncryptSecret = (
 export const create = (
   secret: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm?: EncryptAlgorithm | ""
+  encryptAlgorithm?: EncryptAlgorithm | "",
 ): Promise<string> => {
   const iv = randomBytes(16);
   const cipher = createCipheriv(
     encryptAlgorithm || defaultEncryptAlgorithm,
     Buffer.from(encryptSecret),
-    iv
+    iv,
   );
   const encrypted =
     cipher.update(secret, "utf8", "base64") + cipher.final("base64");
@@ -52,7 +52,7 @@ export const verify = (
   secret: string,
   token: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm?: EncryptAlgorithm | ""
+  encryptAlgorithm?: EncryptAlgorithm | "",
 ): Promise<boolean> => {
   const [iv, encrypted] = token.split(":");
   if (!iv || !encrypted) {
@@ -63,7 +63,7 @@ export const verify = (
     const decipher = createDecipheriv(
       encryptAlgorithm || defaultEncryptAlgorithm,
       Buffer.from(encryptSecret),
-      Buffer.from(iv, "base64")
+      Buffer.from(iv, "base64"),
     );
     decrypted =
       decipher.update(encrypted, "base64", "utf8") + decipher.final("utf8");

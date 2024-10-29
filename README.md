@@ -32,10 +32,10 @@ Import:
 
 ```js
 // ESM
-import { importEncryptSecret, create, verify } from 'uncsrf'
+import { importEncryptSecret, create, verify } from "uncsrf";
 
 // CommonJS
-const { importEncryptSecret, create, verify } = require('uncsrf')
+const { importEncryptSecret, create, verify } = require("uncsrf");
 ```
 
 ## Development

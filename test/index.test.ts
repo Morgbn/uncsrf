@@ -35,7 +35,7 @@ function runTests(csrf) {
     const token = await csrf.create(
       "secret",
       await csrf.importEncryptSecret(),
-      csrf.defaultEncryptAlgorithm
+      csrf.defaultEncryptAlgorithm,
     );
     expect(token.includes(":")).toBe(true);
     const [iv, encrypted] = token.split(":");
@@ -48,15 +48,15 @@ function runTests(csrf) {
     const token = await csrf.create(
       "secret",
       encryptSecret,
-      csrf.defaultEncryptAlgorithm
+      csrf.defaultEncryptAlgorithm,
     );
     expect(
       await csrf.verify(
         "secret",
         token,
         encryptSecret,
-        csrf.defaultEncryptAlgorithm
-      )
+        csrf.defaultEncryptAlgorithm,
+      ),
     ).toBe(true);
 
     expect(
@@ -64,8 +64,8 @@ function runTests(csrf) {
         "secret",
         "",
         encryptSecret,
-        csrf.defaultEncryptAlgorithm
-      )
+        csrf.defaultEncryptAlgorithm,
+      ),
     ).toBe(false);
 
     expect(
@@ -73,8 +73,8 @@ function runTests(csrf) {
         "secret",
         token,
         undefined,
-        csrf.defaultEncryptAlgorithm
-      )
+        csrf.defaultEncryptAlgorithm,
+      ),
     ).toBe(false);
   });
 
@@ -82,8 +82,8 @@ function runTests(csrf) {
     const uuid = csrf.randomSecret();
     expect(uuid).toEqual(
       expect.stringMatching(
-        /^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/
-      )
+        /^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/,
+      ),
     );
   });
 }

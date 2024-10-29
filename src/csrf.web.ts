@@ -10,7 +10,7 @@ export const defaultEncryptAlgorithm: EncryptAlgorithm = "AES-CBC";
 
 export const importEncryptSecret = async (
   secret?: string,
-  encryptAlgorithm?: EncryptAlgorithm | ""
+  encryptAlgorithm?: EncryptAlgorithm | "",
 ): Promise<EncryptSecret> => {
   const keyData = new TextEncoder().encode(secret ?? randomEncryptSecret());
   return await subtle.importKey(
@@ -18,7 +18,7 @@ export const importEncryptSecret = async (
     keyData,
     { name: encryptAlgorithm || defaultEncryptAlgorithm },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
 };
 
@@ -28,17 +28,17 @@ export const importEncryptSecret = async (
 export const create = async (
   secret: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm?: EncryptAlgorithm | ""
+  encryptAlgorithm?: EncryptAlgorithm | "",
 ): Promise<string> => {
   const iv = getRandomValues(new Uint8Array(16));
   const encrypted = await subtle.encrypt(
     { name: encryptAlgorithm || defaultEncryptAlgorithm, iv },
     encryptSecret,
-    new TextEncoder().encode(secret)
+    new TextEncoder().encode(secret),
   );
   const encryptedBuffer = Buffer.from(new Uint8Array(encrypted));
   return `${Buffer.from(iv).toString("base64")}:${encryptedBuffer.toString(
-    "base64"
+    "base64",
   )}`;
 };
 
@@ -49,7 +49,7 @@ export const verify = async (
   secret: string,
   token: string,
   encryptSecret: EncryptSecret,
-  encryptAlgorithm?: EncryptAlgorithm | ""
+  encryptAlgorithm?: EncryptAlgorithm | "",
 ): Promise<boolean> => {
   const [iv, encrypted] = token.split(":");
   if (!iv || !encrypted) {
@@ -63,7 +63,7 @@ export const verify = async (
         iv: Buffer.from(iv, "base64"),
       },
       encryptSecret,
-      Buffer.from(encrypted, "base64")
+      Buffer.from(encrypted, "base64"),
     );
     decrypted = new TextDecoder().decode(encodedDecrypted);
   } catch {
