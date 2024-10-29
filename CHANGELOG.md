@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/morgbn/uncsrf/compare/v1.1.1...v1.2.0) (2024-10-29)
+
+
+### Features
+
+* :art: export `randomEncryptSecret` ([0f28049](https://github.com/morgbn/uncsrf/commit/0f28049563ebe4a3890c8c9b1da854fd9540041e))
+
 ## [1.1.1](https://github.com/morgbn/uncsrf/compare/v1.1.0...v1.1.1) (2023-09-09)
 
 ### Bug Fixes
